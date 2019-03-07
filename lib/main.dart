@@ -5,7 +5,6 @@ import 'login_screen.dart';
 void main() {
   runApp(new MaterialApp(
     home: new MyApp(),
-    //home: LoginScreen1(),
   ));
 }
 
@@ -21,7 +20,7 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return SplashScreen(
       seconds: 3,
-      navigateAfterSeconds: LoginScreen1(),
+      navigateAfterSeconds: LoginScreen(),
       title: Text('Customer',
         style: TextStyle(
           fontWeight: FontWeight.bold,
@@ -29,7 +28,6 @@ class MyAppState extends State<MyApp> {
           color: Colors.blue,
         ),
       ),
-      //image: new Image.network('https://i.imgur.com/TyCSG9A.png'),
       image: Image.asset('assets/images/wmdc_logo.png'),
       backgroundColor: Colors.white,
       styleTextUnderTheLoader: new TextStyle(),

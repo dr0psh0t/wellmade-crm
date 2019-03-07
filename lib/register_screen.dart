@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatelessWidget {
 
-  final Color primaryColor;
-  final Color backgroundColor;
-
-  RegisterScreen({
-    Key key,
-    this.primaryColor, this.backgroundColor,
-  });
+  final Color primaryColor = Color(0xFF4aa0d5);
+  final Color backgroundColor = Colors.white;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +22,6 @@ class RegisterScreen extends StatelessWidget {
           children: <Widget>[
             
             Padding(
-              //padding: const EdgeInsets.only(left: 40.0),
               padding: const EdgeInsets.fromLTRB(40, 20, 0, 0),
               child: Text(
                 "Username",
@@ -275,40 +269,12 @@ class RegisterScreen extends StatelessWidget {
                       child: Row(
                         children: <Widget>[
                           Padding(
-                            //padding: const EdgeInsets.only(left: 20.0),
                             padding: const EdgeInsets.all(17.0),
                             child: Text(
                               "REGISTER",
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
-
-                          /*
-                          new Expanded(
-                            child: Container(),
-                          ),
-
-                          new Transform.translate(
-                            offset: Offset(15.0, 0.0),
-                            child: new Container(
-                              padding: const EdgeInsets.all(5.0),
-                              child: FlatButton(
-                                shape: new RoundedRectangleBorder(
-                                  borderRadius:
-                                  new BorderRadius.circular(28.0)),
-                                splashColor: Colors.white,
-                                color: Colors.white,
-                                child: Icon(
-                                  Icons.arrow_forward,
-                                  color: this.primaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ),
-                          ),
-                          */
 
                         ],
                       ),

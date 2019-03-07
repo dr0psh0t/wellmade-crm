@@ -3,35 +3,40 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'notif.dart';
-import 'notificationlist.dart';
+import 'history.dart';
+import 'historylist.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/cupertino.dart';
 
-Future<List<Notif>> fetchNotif(http.Client client) async {
-  final response = await client.get('http://192.168.1.30:8080/mcsa/getnotifications');
+Future<List<History>> fetchHistories(http.Client client) async {
+  final response = await client.get('http://192.168.1.30:8080/mcsa/gethistory');
   return compute(parseData, response.body);
 }
 
-List<Notif> parseData(String responseBody) {  
+List<History> parseData(String responseBody) {
   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-  return parsed.map<Notif>((json) => new Notif.fromJson(json)).toList();
+  return parsed.map<History>((json) => new History.fromJson(json)).toList();
 }
 
-class NotificationsWidget extends StatelessWidget {
+class HistoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notification'),
+        title: Text('History'),
       ),
-      body: FutureBuilder<List<Notif>>(
-        future: fetchNotif(new http.Client()),
+      body: FutureBuilder<List<History>>(
+        future: fetchHistories(new http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             print(snapshot.error);
           }
+
+          print('snapshot_histories:');
+          print(snapshot.data);
+
           if (snapshot.hasData) {
-            return NotifList(notif: snapshot.data);
+            return HistoryList(histories: snapshot.data);
           }
           else {
             return Center(child: new CircularProgressIndicator());

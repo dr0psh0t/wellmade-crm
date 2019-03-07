@@ -7,6 +7,7 @@ class OptionsWidget extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Options'),
+        automaticallyImplyLeading: false,
       ),
       body: Text(
         'Options',

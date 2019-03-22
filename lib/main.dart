@@ -10,30 +10,32 @@ void main() {
 
 class MyApp extends StatefulWidget {
   @override
-  MyAppState createState() { 
-    return MyAppState();
-  }
+  _MyAppState createState() => new _MyAppState();
 }
 
-class MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return SplashScreen(
-      seconds: 3,
+    return new SplashScreen(
+      seconds: 5,
+      //navigateAfterSeconds: new AfterSplash(),
       navigateAfterSeconds: LoginScreen(),
-      title: Text('Customer',
-        style: TextStyle(
+      title: new Text(
+        'Welcome Wellmade',
+        style: new TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 20.0,
-          color: Colors.blue,
+          fontSize: 20.0
         ),
       ),
-      image: Image.asset('assets/images/wmdc_logo.png'),
+      //image: new Image.network('https://i.imgur.com/TyCSG9A.png'),
+      image: Image.asset('assets/images/wmdc_logo.jpg'),
       backgroundColor: Colors.white,
       styleTextUnderTheLoader: new TextStyle(),
-      photoSize: 300.0,
-      onClick: ()=>print("Flutter"),
-      loaderColor: Colors.blue
+      photoSize: 100.0,
+      onClick: () {
+        print('Flutter Egypt');
+      },
+      loaderColor: Colors.red,
     );
   }
 }
@@ -42,15 +44,16 @@ class AfterSplash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-      title: new Text("Welcome In SplashScreen Package"),
-      automaticallyImplyLeading: false
+      appBar: AppBar(
+        title: Text('Welcome In Wellmade Package'),
+        automaticallyImplyLeading: false,
       ),
-      body: new Center(
-        child: new Text("Done!",
-          style: new TextStyle(
+      body: Center(
+        child: Text(
+          'Done!', 
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 30.0
+            fontSize: 30.0,
           ),
         ),
       ),

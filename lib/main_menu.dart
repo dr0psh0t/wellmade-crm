@@ -3,13 +3,17 @@ import 'joborders.dart';
 import 'notifications.dart';
 import 'histories.dart';
 import 'options.dart';
+import 'login_screen.dart';
 
 class MainMenuApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Main Menu',
+      title: 'MainMenu',
       home: MainMenuPage(),
+      routes: {
+        "/login": (_) => LoginScreen(),
+      },
     );
   }
 }
@@ -21,8 +25,14 @@ class MainMenuPage extends StatefulWidget {
   }
 }
 
-class MainMenuState extends State<MainMenuPage> {
+class MainMenuState extends State<MainMenuPage> with AutomaticKeepAliveClientMixin<MainMenuPage> {
+  @override
+  bool get wantKeepAlive => true;
+
   int bottomSelectedIndex = 0;
+
+  var titles = ['Joborders', 'Notifications', 'History', 'Options'];
+  var appbarTitle = '';
 
   PageController pageController = PageController(
     initialPage: 0,
@@ -32,16 +42,22 @@ class MainMenuState extends State<MainMenuPage> {
   @override
   void initState() {
     super.initState();
+    appbarTitle =titles[0];
   }
+
+  var appBarList;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
       body: PageView(
         controller: pageController,
         onPageChanged: (index) {
           setState(() {
             bottomSelectedIndex = index; 
+            appbarTitle = titles[bottomSelectedIndex];
           });
         },
         children: <Widget>[
@@ -81,7 +97,7 @@ class MainMenuState extends State<MainMenuPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            title: Text('Options')
+            title: Text('Options'),
           ),
         ],
       ),

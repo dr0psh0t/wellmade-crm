@@ -4,11 +4,9 @@ class JoInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*
       appBar: AppBar(
         title: Text('Details'),
       ),
-      */
       body: Column(
         children: <Widget>[
           headerCard(context, 2, 'Roadstar', 'WMDC'),

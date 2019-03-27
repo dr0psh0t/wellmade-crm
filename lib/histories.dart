@@ -67,6 +67,8 @@ class HistoryPage extends StatefulWidget {
 class HistoryState extends State<HistoryPage> with AutomaticKeepAliveClientMixin<HistoryPage> {
   @override
   bool get wantKeepAlive => true;
+  int page = 1;
+  var text;
 
   Future<List<History>> historyFuture;
 
@@ -74,6 +76,7 @@ class HistoryState extends State<HistoryPage> with AutomaticKeepAliveClientMixin
   void initState() {
     super.initState();
     historyFuture = fetchHistories(new http.Client());
+    text =page.toString()+' of 10';
   }
 
   @override
@@ -101,7 +104,55 @@ class HistoryState extends State<HistoryPage> with AutomaticKeepAliveClientMixin
             print(snapshot.error);
           }
           if (snapshot.hasData) {
-            return HistoryList(histories: snapshot.data);
+            return HistoryList(
+              histories: snapshot.data, 
+              row: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  FloatingActionButton.extended(
+                    onPressed: () {
+                      setState(() {
+                        if (page < 2) {
+                          page = 1;
+                        }
+                        else {
+                          page--;
+                          historyFuture = fetchHistories(new http.Client());
+                        }
+                        text =page.toString()+' of 10';
+                      });
+                    },
+                    icon: Icon(Icons.arrow_back_ios),
+                    label: Text('Prev'),
+                  ),
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontFamily: 'Pacifico',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  FloatingActionButton.extended(
+                    onPressed: () {
+                      setState(() {
+                        if (page > 9) {
+                          page = 10;
+                        }
+                        else {
+                          page++;
+                          historyFuture = fetchHistories(new http.Client());
+                        }
+                        text =page.toString()+' of 10';
+                      });
+                    },
+                    icon: Icon(Icons.arrow_forward_ios),
+                    label: Text('Next'),
+                  ),
+                ],
+              ),
+            );
           }
           else {
             return Center(child: new CircularProgressIndicator());

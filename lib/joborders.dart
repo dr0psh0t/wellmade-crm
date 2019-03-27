@@ -12,43 +12,45 @@ import 'login_screen.dart';
 import 'main.dart';
 
 Future<List<Joborder>> fetchJoborders(http.Client client) async {
-  final SharedPreferences prefs =await SharedPreferences.getInstance();
+    final SharedPreferences prefs =await SharedPreferences.getInstance();
 
-  String sessionId = prefs.getString("sessionId");
-  int userId = prefs.getInt("userId");
-  
-  String cookie = 'JSESSIONID='+sessionId;
-  String userIdStr = userId.toString();
+    String sessionId = prefs.getString("sessionId");
+    int userId = prefs.getInt("userId");
+    
+    String cookie = 'JSESSIONID='+sessionId;
+    String userIdStr = userId.toString();
 
-  final uri = new Uri.http(
-    '192.168.1.30:8080',
-    '/wellmadecrm/getjoborders', {
-      "userId":userIdStr,
-      "sessionId":sessionId,                                                                              
+    final uri = new Uri.http(
+      '192.168.1.30:8080',
+      '/wellmadecrm/getjoborders', {
+        "userId":userIdStr,
+        "sessionId":sessionId,                                                                              
+      }
+    );
+
+    var response = await http.post(uri, headers: {
+      'Accept':'application/json',
+      'Cookie':cookie,
+    });
+
+    if (response == null) {
+      //showSnackbar('CANNOT FILL JOBORDERS. RESPONSE IS NULL.', 'Null');
+      print('CANNOT FILL JOBORDERS. RESPONSE IS NULL.');
+    } 
+
+    if (response.statusCode == 200) {
+      return compute(parseData, response.body);
+    } 
+    else {
+      //showSnackbar('Reponse is not OK', response.statusCode.toString());
+      print('Reponse is not OK');
     }
-  );
-
-  var response = await http.post(uri, headers: {
-    'Accept':'application/json',
-    'Cookie':cookie,
-  });
-
-  if (response == null) {
-    print('CANNOT FILL JOBORDERS. RESPONSE IS NULL.');
-  } 
-
-  if (response.statusCode == 200) {
-    return compute(parseData, response.body);
-  } 
-  else {
-
   }
-}
 
-List<Joborder> parseData(String responseBody) {
-  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-  return parsed.map<Joborder>((json) => new Joborder.fromJson(json)).toList();
-}
+  List<Joborder> parseData(String responseBody) {
+    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Joborder>((json) => new Joborder.fromJson(json)).toList();
+  }
 
 class JoborderWidget extends StatelessWidget {
   @override
@@ -74,6 +76,9 @@ class JoborderPage extends StatefulWidget {
 class JoborderState extends State<JoborderPage> with AutomaticKeepAliveClientMixin<JoborderPage> {
   @override
   bool get wantKeepAlive => true;
+  final _scaffoldKey =GlobalKey<ScaffoldState>();
+  int page = 1;
+  var text;
 
   Future<List<Joborder>> joborderFuture;
 
@@ -81,12 +86,14 @@ class JoborderState extends State<JoborderPage> with AutomaticKeepAliveClientMix
   void initState() {
     joborderFuture = fetchJoborders(new http.Client());
     super.initState();
+    text =page.toString()+' of 10';
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Joborders'),
         actions: <Widget>[
@@ -94,7 +101,9 @@ class JoborderState extends State<JoborderPage> with AutomaticKeepAliveClientMix
             icon: Icon(Icons.search),
             tooltip: 'Search',
             onPressed: () {
-              
+              setState(() {
+                joborderFuture = fetchJoborders(new http.Client());
+              });
             },
           ),
           IconButton(
@@ -115,7 +124,55 @@ class JoborderState extends State<JoborderPage> with AutomaticKeepAliveClientMix
             print(snapshot.error);
           }
           if (snapshot.hasData) {
-            return JoborderList(joborders: snapshot.data);
+            return JoborderList(
+              joborders: snapshot.data, 
+              row: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  FloatingActionButton.extended(
+                    onPressed: () {
+                      setState(() {
+                        if (page < 2) {
+                          page = 1;
+                        }
+                        else {
+                          page--;
+                          joborderFuture = fetchJoborders(new http.Client());
+                        }
+                        text =page.toString()+' of 10';
+                      });
+                    },
+                    icon: Icon(Icons.arrow_back_ios),
+                    label: Text('Prev'),
+                  ),
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontFamily: 'Pacifico',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  FloatingActionButton.extended(
+                    onPressed: () {
+                      setState(() {
+                        if (page > 9) {
+                          page = 10;
+                        }
+                        else {
+                          page++;
+                          joborderFuture = fetchJoborders(new http.Client());
+                        }
+                        text =page.toString()+' of 10';
+                      });
+                    },
+                    icon: Icon(Icons.arrow_forward_ios),
+                    label: Text('Next'),
+                  ),
+                ],
+              ),
+            );
           }
           else {
             return Center(child: new CircularProgressIndicator());

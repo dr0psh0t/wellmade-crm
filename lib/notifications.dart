@@ -39,11 +39,6 @@ Future<List<Notif>> fetchNotif(http.Client client) async {
   else {
 
   }
-
-  /*
-  final response = await client.get('http://192.168.1.30:8080/wellmadecrm/getnotifications');
-  return compute(parseData, response.body);
-  */
 }
 
 List<Notif> parseData(String responseBody) {  
@@ -71,6 +66,8 @@ class NotificationsPage extends StatefulWidget {
 class NotificationsState extends State<NotificationsPage> with AutomaticKeepAliveClientMixin<NotificationsPage> {
   @override
   bool get wantKeepAlive => true;
+  int page = 1;
+  var text;
 
   Future<List<Notif>> notificationFuture;
 
@@ -78,6 +75,7 @@ class NotificationsState extends State<NotificationsPage> with AutomaticKeepAliv
   void initState() {
     notificationFuture = fetchNotif(new http.Client());
     super.initState();
+    text =page.toString()+' of 10';
   }
 
   @override
@@ -105,7 +103,53 @@ class NotificationsState extends State<NotificationsPage> with AutomaticKeepAliv
             print(snapshot.error);
           }
           if (snapshot.hasData) {
-            return NotifList(notif: snapshot.data);
+            return NotifList(
+              notif: snapshot.data, 
+              row: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        if (page < 2) {
+                          page = 1;
+                        }
+                        else {
+                          page--;
+                          notificationFuture = fetchNotif(new http.Client());
+                        }
+                        text =page.toString()+' of 10';
+                      });
+                    },
+                    child: Icon(Icons.arrow_forward_ios),
+                  ),
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontFamily: 'Pacifico',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        if (page > 9) {
+                          page = 10;
+                        }
+                        else {
+                          page++;
+                          notificationFuture = fetchNotif(new http.Client());
+                        }
+                        text =page.toString()+' of 10';
+                      });
+                    },
+                    child: Icon(Icons.arrow_forward_ios),
+                  ),
+                ],
+              ),
+            );
           }
           else {
             return Center(child: new CircularProgressIndicator());
